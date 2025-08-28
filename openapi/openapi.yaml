@@ -1,0 +1,543 @@
+openapi: 3.0.0
+info:
+  title: Users and Warehouse API
+  version: 1.0.0
+paths:
+  /warehouse:
+    get:
+      summary: Get all warehouse products
+      tags:
+        - warehouse
+      responses:
+        '200':
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WarehouseProduct'
+    post:
+      summary: Create a new warehouse product
+      tags:
+        - warehouse
+      requestBody:
+        description: Product to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarehouseProductRequest'
+      responses:
+        '201':
+          description: Created product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseProduct'
+        '400':
+          description: Bad request
+  /warehouse/{product_id}:
+    get:
+      summary: Get product by ID
+      tags:
+        - warehouse
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseProduct'
+        '404':
+          description: Product not found
+    patch:
+      summary: Update product parameters
+      tags:
+        - warehouse
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Product updates
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarehouseProductUpdate'
+      responses:
+        '200':
+          description: Updated product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseProduct'
+        '404':
+          description: Product not found
+    delete:
+      summary: Delete product
+      tags:
+        - warehouse
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Product deleted
+        '404':
+          description: Product not found
+
+  /users:
+    get:
+      summary: Get all users
+      tags:
+        - users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a new user
+      tags:
+        - users
+      requestBody:
+        description: User to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '201':
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+
+  /users/{user_id}:
+    get:
+      summary: Get user by ID
+      tags:
+        - users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+    patch:
+      summary: Update user by ID
+      tags:
+        - users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User updates
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+        '404':
+          description: User not found
+    delete:
+      summary: Delete user by ID
+      tags:
+        - users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted
+        '404':
+          description: User not found
+
+  /users/{user_id}/carts:
+    get:
+      summary: Get all user`s cart products
+      tags:
+        - users
+        - warehouse
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of user`s cart products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItem'
+        '404':
+          description: User not found
+    post:
+      summary: Add product to cart
+      tags:
+        - users
+        - warehouse
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Product id to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddProductToCartRequest'
+      responses:
+        '201':
+          description: Product added to cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+        '404':
+          description: User or product not found
+
+  /users/{user_id}/carts/{product_id}:
+    patch:
+      summary: Update cart-item quantity
+      tags:
+        - users
+        - warehouse
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update cart-item quantity
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItemUpdateRequest'
+      responses:
+        '200':
+          description: Quantity has updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+    delete:
+      summary: Delete product from cart
+      tags:
+        - users
+        - warehouse
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Cart-item was deleted
+        '404':
+          description: User or cart-item not found
+
+  /users/{user_id}/orders:
+    get:
+      summary: Get all user`s orders
+      tags:
+        - users
+        - warehouse
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of users`s orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '404':
+          description: User not found
+    post:
+      summary: Order from cart
+      tags:
+        - users
+        - warehouse
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: New Order
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmOrder'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad Request
+        '404':
+          description: User not found
+
+  /users/{user_id}/orders/{order_id}:
+    get:
+      summary: Get order by ID
+      tags:
+        - users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: order_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User order by ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: User or order not found
+
+
+
+components:
+  schemas:
+    WarehouseProduct:
+      type: object
+      properties:
+        product_id:
+          type: string
+          x-go-name: productID
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+        quantity:
+          type: integer
+          minimum: 0
+      required:
+        - product_id
+        - name
+        - price
+        - quantity
+
+    WarehouseProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+        quantity:
+          type: integer
+      required:
+        - name
+        - price
+        - quantity
+
+    WarehouseProductUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+        quantity:
+          type: integer
+          minimum: 0
+
+    UserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        information:
+          type: string
+      required:
+        - email
+        - password
+
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+          x-go-name: userID
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - user_id
+        - email
+        - password
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        information:
+          type: string
+
+    AddProductToCartRequest:
+      type: object
+      properties:
+        product_id:
+          type: string
+        quantity:
+          type: integer
+      required:
+        - product_id
+        - quantity
+
+    Order:
+      type: object
+      properties:
+        order_id:
+          type: string
+        cart_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - order_id
+        - cart_items
+        - created_at
+
+    ConfirmOrder:
+      type: object
+      properties:
+        confirm:
+          type: boolean
+      required:
+        - confirm
+
+    CartItem:
+      type: object
+      properties:
+        product_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        quantity:
+          type: integer
+      required:
+        - product_id
+        - name
+        - price
+        - quantity
+
+    CartItemUpdateRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+      required:
+        - quantity
