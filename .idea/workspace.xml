@@ -5,17 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c246eaa7-7c20-4fb6-a94a-ff6ee5a9f404" name="Changes" comment="">
-      <change afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/makefile" afterDir="false" />
-      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/.golangci.yml" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/.golangci.yml" afterDir="false" />
       <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/.idea/workspace.xml" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/cartORM.go" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/cartItemORM.go" afterDir="false" />
+      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/cartItemORM.go" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/cartItemORM.go" afterDir="false" />
+      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/orderORM.go" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/orderORM.go" afterDir="false" />
+      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/productORM.go" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/productORM.go" afterDir="false" />
       <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/userORM.go" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/userORM.go" afterDir="false" />
-      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/userOrdersORM.go" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/orderORM.go" afterDir="false" />
-      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/warehouseORM.go" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/models/productORM.go" afterDir="false" />
       <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/userService/userRepo.go" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/userService/userRepo.go" afterDir="false" />
-      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/warehouseService/warehouseRepo.go" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/internal/warehouseService/warehouseRepo.go" afterDir="false" />
-      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/openapi/.openapi" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/openapi/.openapi" afterDir="false" />
-      <change beforePath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/openapi/openapi.yaml" beforeDir="false" afterPath="$APPLICATION_HOME_DIR$/%GOPATH%/src/MarketPlace_Pet/openapi/openapi.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
