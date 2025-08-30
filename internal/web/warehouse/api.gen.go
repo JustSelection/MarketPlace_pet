@@ -17,8 +17,9 @@ import (
 
 // AddProductToCartRequest defines model for AddProductToCartRequest.
 type AddProductToCartRequest struct {
-	ProductId string `json:"product_id"`
+	productID string `json:"product_id"`
 	Quantity  int    `json:"quantity"`
+	userID    string `json:"user_id"`
 }
 
 // CartItem defines model for CartItem.
@@ -26,25 +27,27 @@ type CartItem struct {
 	Description *string `json:"description,omitempty"`
 	Name        string  `json:"name"`
 	Price       float32 `json:"price"`
-	ProductId   string  `json:"product_id"`
+	productID   string  `json:"product_id"`
 	Quantity    int     `json:"quantity"`
 }
 
 // CartItemUpdateRequest defines model for CartItemUpdateRequest.
 type CartItemUpdateRequest struct {
-	Quantity int `json:"quantity"`
+	productID *string `json:"product_id,omitempty"`
+	Quantity  int     `json:"quantity"`
 }
 
 // ConfirmOrder defines model for ConfirmOrder.
 type ConfirmOrder struct {
-	Confirm bool `json:"confirm"`
+	Confirm bool   `json:"confirm"`
+	userID  string `json:"user_id"`
 }
 
 // Order defines model for Order.
 type Order struct {
 	CartItems []CartItem `json:"cart_items"`
 	CreatedAt time.Time  `json:"created_at"`
-	OrderId   string     `json:"order_id"`
+	orderID   string     `json:"order_id"`
 }
 
 // WarehouseProduct defines model for WarehouseProduct.
@@ -58,7 +61,7 @@ type WarehouseProduct struct {
 
 // WarehouseProductRequest defines model for WarehouseProductRequest.
 type WarehouseProductRequest struct {
-	Description *string `json:"description,omitempty"`
+	Description string  `json:"description"`
 	Name        string  `json:"name"`
 	Price       float32 `json:"price"`
 	Quantity    int     `json:"quantity"`

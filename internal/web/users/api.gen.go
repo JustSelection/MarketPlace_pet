@@ -17,8 +17,9 @@ import (
 
 // AddProductToCartRequest defines model for AddProductToCartRequest.
 type AddProductToCartRequest struct {
-	ProductId string `json:"product_id"`
+	productID string `json:"product_id"`
 	Quantity  int    `json:"quantity"`
+	userID    string `json:"user_id"`
 }
 
 // CartItem defines model for CartItem.
@@ -26,41 +27,50 @@ type CartItem struct {
 	Description *string `json:"description,omitempty"`
 	Name        string  `json:"name"`
 	Price       float32 `json:"price"`
-	ProductId   string  `json:"product_id"`
+	productID   string  `json:"product_id"`
 	Quantity    int     `json:"quantity"`
 }
 
 // CartItemUpdateRequest defines model for CartItemUpdateRequest.
 type CartItemUpdateRequest struct {
-	Quantity int `json:"quantity"`
+	productID *string `json:"product_id,omitempty"`
+	Quantity  int     `json:"quantity"`
 }
 
 // ConfirmOrder defines model for ConfirmOrder.
 type ConfirmOrder struct {
-	Confirm bool `json:"confirm"`
+	Confirm bool   `json:"confirm"`
+	userID  string `json:"user_id"`
 }
 
 // Order defines model for Order.
 type Order struct {
 	CartItems []CartItem `json:"cart_items"`
 	CreatedAt time.Time  `json:"created_at"`
-	OrderId   string     `json:"order_id"`
+	orderID   string     `json:"order_id"`
 }
 
 // User defines model for User.
 type User struct {
-	Email    string  `json:"email"`
-	Name     *string `json:"name,omitempty"`
-	Password string  `json:"password"`
-	userID   string  `json:"user_id"`
+	Email  string `json:"email"`
+	userID string `json:"user_id"`
+}
+
+// UserDetails defines model for UserDetails.
+type UserDetails struct {
+	Email       string `json:"email"`
+	Information string `json:"information"`
+	Name        string `json:"name"`
+	Password    string `json:"password"`
+	userID      string `json:"user_id"`
 }
 
 // UserRequest defines model for UserRequest.
 type UserRequest struct {
-	Email       string  `json:"email"`
-	Information *string `json:"information,omitempty"`
-	Name        *string `json:"name,omitempty"`
-	Password    string  `json:"password"`
+	Email       string `json:"email"`
+	Information string `json:"information"`
+	Name        string `json:"name"`
+	Password    string `json:"password"`
 }
 
 // UserUpdate defines model for UserUpdate.
@@ -400,7 +410,7 @@ type PostUsersResponseObject interface {
 	VisitPostUsersResponse(w http.ResponseWriter) error
 }
 
-type PostUsers201JSONResponse User
+type PostUsers201JSONResponse UserDetails
 
 func (response PostUsers201JSONResponse) VisitPostUsersResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -449,7 +459,7 @@ type GetUsersUserIdResponseObject interface {
 	VisitGetUsersUserIdResponse(w http.ResponseWriter) error
 }
 
-type GetUsersUserId200JSONResponse User
+type GetUsersUserId200JSONResponse UserDetails
 
 func (response GetUsersUserId200JSONResponse) VisitGetUsersUserIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")

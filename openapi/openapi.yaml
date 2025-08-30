@@ -130,7 +130,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDetails'
         '400':
           description: Bad Request
 
@@ -151,7 +151,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDetails'
         '404':
           description: User not found
     patch:
@@ -418,6 +418,7 @@ components:
           type: integer
       required:
         - name
+        - description
         - price
         - quantity
 
@@ -448,6 +449,8 @@ components:
           type: string
       required:
         - email
+        - name
+        - information
         - password
 
     User:
@@ -456,7 +459,21 @@ components:
         user_id:
           type: string
           x-go-name: userID
+        email:
+          type: string
+      required:
+        - user_id
+        - email
+
+    UserDetails:
+      type: object
+      properties:
+        user_id:
+          type: string
+          x-go-name: userID
         name:
+          type: string
+        information:
           type: string
         email:
           type: string
@@ -464,6 +481,8 @@ components:
           type: string
       required:
         - user_id
+        - name
+        - information
         - email
         - password
 
@@ -482,12 +501,17 @@ components:
     AddProductToCartRequest:
       type: object
       properties:
+        user_id:
+          type: string
+          x-go-name: userID
         product_id:
           type: string
+          x-go-name: productID
         quantity:
           type: integer
       required:
         - product_id
+        - user_id
         - quantity
 
     Order:
@@ -495,6 +519,7 @@ components:
       properties:
         order_id:
           type: string
+          x-go-name: orderID
         cart_items:
           type: array
           items:
@@ -510,9 +535,13 @@ components:
     ConfirmOrder:
       type: object
       properties:
+        user_id:
+          type: string
+          x-go-name: userID
         confirm:
           type: boolean
       required:
+        - user_id
         - confirm
 
     CartItem:
@@ -520,6 +549,7 @@ components:
       properties:
         product_id:
           type: string
+          x-go-name: productID
         name:
           type: string
         description:
@@ -539,5 +569,8 @@ components:
       properties:
         quantity:
           type: integer
+        product_id:
+          type: string
+          x-go-name: productID
       required:
         - quantity

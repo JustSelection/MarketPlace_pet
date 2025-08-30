@@ -10,6 +10,8 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+// Нужно будет доработать метод CreateNewUserOrder - добавить списывание товара со склада
+
 type UserRepository interface {
 	GetAllUsers() ([]models.User, error)
 	CreateNewUser(user models.User) (models.User, error)
@@ -19,7 +21,8 @@ type UserRepository interface {
 	DeleteCartUserProduct(userID, productID string) error
 	UpdateQuantityCartUserProduct(userID string, item models.UserCartItem) (models.UserCartItem, error)
 	CreateCartUserProduct(userID string, item models.UserCartItem) (models.UserCartItem, error)
-	GetAllCartUserProduct(userID string) ([]models.UserCartItem, error)
+	GetAllCartUserProducts(userID string) ([]models.UserCartItem, error)
+	GetCartUserProductByID(userID, productID string) (models.UserCartItem, error)
 	CreateNewUserOrder(userID, orderID string) ([]models.OrderItem, error)
 	GetAllUserOrders(userID string) ([]models.Order, error)
 	GetUserOrderByID(userID, orderID string) ([]models.OrderItem, error)
@@ -150,7 +153,7 @@ func (r *userRepository) CreateCartUserProduct(userID string, item models.UserCa
 	return cartItem, nil
 }
 
-func (r *userRepository) GetAllCartUserProduct(userID string) ([]models.UserCartItem, error) {
+func (r *userRepository) GetAllCartUserProducts(userID string) ([]models.UserCartItem, error) {
 	var items []models.UserCartItem
 	err := r.db.Where("user_id = ?", userID).Find(&items).Error
 	if err != nil {
@@ -160,6 +163,20 @@ func (r *userRepository) GetAllCartUserProduct(userID string) ([]models.UserCart
 	return items, nil
 }
 
+func (r *userRepository) GetCartUserProductByID(userID, productID string) (models.UserCartItem, error) {
+	item := models.UserCartItem{}
+	err := r.db.Where("user_id = ? AND product_id = ?", userID, productID).First(&item).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return models.UserCartItem{}, fmt.Errorf("repo: user not found: %w", err)
+		}
+		return models.UserCartItem{}, fmt.Errorf("repo: could not get cart item by id: %w", err)
+	}
+	return item, nil
+}
+
+// CreateNewUserOrder - Добавить списывание товара со склада!
+// + мы возвращаем список товаров из заказа (конечно, разумно было бы возвращать заказ, но менее информативно)
 func (r *userRepository) CreateNewUserOrder(userID, orderID string) ([]models.OrderItem, error) {
 	var items []models.UserCartItem
 	err := r.db.Where("user_id = ?", userID).Find(&items).Error
@@ -186,6 +203,24 @@ func (r *userRepository) CreateNewUserOrder(userID, orderID string) ([]models.Or
 	}
 
 	err = r.db.Transaction(func(tx *gorm.DB) error {
+
+		for _, item := range orderItems {
+			var product models.Product
+			err := tx.Where("product_id = ?", item.ProductID).First(&product).Error
+			if err != nil {
+				return fmt.Errorf("repo: could not find product %s: %w", item.ProductID, err)
+			}
+
+			if product.Quantity < item.Quantity {
+				return fmt.Errorf("repo: not enough quantity warehouse product`s %s", item.ProductID)
+			}
+
+			product.Quantity -= item.Quantity
+			err = tx.Save(&product).Error
+			if err != nil {
+				return fmt.Errorf("repo: could not order product %s: %w", item.ProductID, err)
+			}
+		}
 
 		err := tx.Create(&order).Error
 		if err != nil {
