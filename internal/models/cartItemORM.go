@@ -5,6 +5,6 @@ type UserCartItem struct {
 	UserID      string  `json:"user_id" gorm:"primaryKey"`
 	Name        string  `json:"name"`
 	Description string  `json:"description,omitempty"`
-	Price       float64 `json:"price"`
+	Price       float32 `json:"price"`
 	Quantity    int     `json:"quantity"`
 }

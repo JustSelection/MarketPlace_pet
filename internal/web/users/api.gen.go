@@ -17,9 +17,9 @@ import (
 
 // AddProductToCartRequest defines model for AddProductToCartRequest.
 type AddProductToCartRequest struct {
-	productID string `json:"product_id"`
+	ProductID string `json:"product_id"`
 	Quantity  int    `json:"quantity"`
-	userID    string `json:"user_id"`
+	UserID    string `json:"user_id"`
 }
 
 // CartItem defines model for CartItem.
@@ -27,33 +27,42 @@ type CartItem struct {
 	Description *string `json:"description,omitempty"`
 	Name        string  `json:"name"`
 	Price       float32 `json:"price"`
-	productID   string  `json:"product_id"`
+	ProductID   string  `json:"product_id"`
 	Quantity    int     `json:"quantity"`
 }
 
 // CartItemUpdateRequest defines model for CartItemUpdateRequest.
 type CartItemUpdateRequest struct {
-	productID *string `json:"product_id,omitempty"`
+	ProductID *string `json:"product_id,omitempty"`
 	Quantity  int     `json:"quantity"`
 }
 
 // ConfirmOrder defines model for ConfirmOrder.
 type ConfirmOrder struct {
 	Confirm bool   `json:"confirm"`
-	userID  string `json:"user_id"`
+	UserID  string `json:"user_id"`
 }
 
 // Order defines model for Order.
 type Order struct {
-	CartItems []CartItem `json:"cart_items"`
-	CreatedAt time.Time  `json:"created_at"`
-	orderID   string     `json:"order_id"`
+	CartItems *[]CartItem `json:"cart_items,omitempty"`
+	CreatedAt time.Time   `json:"created_at"`
+	OrderID   string      `json:"order_id"`
+}
+
+// OrderItem defines model for OrderItem.
+type OrderItem struct {
+	OrderId   string  `json:"order_id"`
+	Price     float32 `json:"price"`
+	ProductId string  `json:"product_id"`
+	Quantity  int     `json:"quantity"`
+	UserId    string  `json:"user_id"`
 }
 
 // User defines model for User.
 type User struct {
 	Email  string `json:"email"`
-	userID string `json:"user_id"`
+	UserID string `json:"user_id"`
 }
 
 // UserDetails defines model for UserDetails.
@@ -62,7 +71,7 @@ type UserDetails struct {
 	Information string `json:"information"`
 	Name        string `json:"name"`
 	Password    string `json:"password"`
-	userID      string `json:"user_id"`
+	UserID      string `json:"user_id"`
 }
 
 // UserRequest defines model for UserRequest.
@@ -485,7 +494,7 @@ type PatchUsersUserIdResponseObject interface {
 	VisitPatchUsersUserIdResponse(w http.ResponseWriter) error
 }
 
-type PatchUsersUserId200JSONResponse User
+type PatchUsersUserId200JSONResponse UserDetails
 
 func (response PatchUsersUserId200JSONResponse) VisitPatchUsersUserIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -553,6 +562,14 @@ func (response PostUsersUserIdCarts201JSONResponse) VisitPostUsersUserIdCartsRes
 	return json.NewEncoder(w).Encode(response)
 }
 
+type PostUsersUserIdCarts400Response struct {
+}
+
+func (response PostUsersUserIdCarts400Response) VisitPostUsersUserIdCartsResponse(w http.ResponseWriter) error {
+	w.WriteHeader(400)
+	return nil
+}
+
 type PostUsersUserIdCarts404Response struct {
 }
 
@@ -605,6 +622,22 @@ func (response PatchUsersUserIdCartsProductId200JSONResponse) VisitPatchUsersUse
 	return json.NewEncoder(w).Encode(response)
 }
 
+type PatchUsersUserIdCartsProductId400Response struct {
+}
+
+func (response PatchUsersUserIdCartsProductId400Response) VisitPatchUsersUserIdCartsProductIdResponse(w http.ResponseWriter) error {
+	w.WriteHeader(400)
+	return nil
+}
+
+type PatchUsersUserIdCartsProductId404Response struct {
+}
+
+func (response PatchUsersUserIdCartsProductId404Response) VisitPatchUsersUserIdCartsProductIdResponse(w http.ResponseWriter) error {
+	w.WriteHeader(404)
+	return nil
+}
+
 type GetUsersUserIdOrdersRequestObject struct {
 	UserId string `json:"user_id"`
 }
@@ -639,7 +672,7 @@ type PostUsersUserIdOrdersResponseObject interface {
 	VisitPostUsersUserIdOrdersResponse(w http.ResponseWriter) error
 }
 
-type PostUsersUserIdOrders201JSONResponse Order
+type PostUsersUserIdOrders201JSONResponse []OrderItem
 
 func (response PostUsersUserIdOrders201JSONResponse) VisitPostUsersUserIdOrdersResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -673,7 +706,7 @@ type GetUsersUserIdOrdersOrderIdResponseObject interface {
 	VisitGetUsersUserIdOrdersOrderIdResponse(w http.ResponseWriter) error
 }
 
-type GetUsersUserIdOrdersOrderId200JSONResponse Order
+type GetUsersUserIdOrdersOrderId200JSONResponse []OrderItem
 
 func (response GetUsersUserIdOrdersOrderId200JSONResponse) VisitGetUsersUserIdOrdersOrderIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")

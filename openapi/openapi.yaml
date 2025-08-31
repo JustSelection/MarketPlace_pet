@@ -83,6 +83,8 @@ paths:
                 $ref: '#/components/schemas/WarehouseProduct'
         '404':
           description: Product not found
+        '400':
+          description: Bad request
     delete:
       summary: Delete product
       tags:
@@ -177,7 +179,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDetails'
         '400':
           description: Bad Request
         '404':
@@ -203,7 +205,6 @@ paths:
       summary: Get all user`s cart products
       tags:
         - users
-        - warehouse
       parameters:
         - name: user_id
           in: path
@@ -225,7 +226,6 @@ paths:
       summary: Add product to cart
       tags:
         - users
-        - warehouse
       parameters:
         - name: user_id
           in: path
@@ -247,13 +247,14 @@ paths:
                 $ref: '#/components/schemas/CartItem'
         '404':
           description: User or product not found
+        '400':
+          description: Bad Request
 
   /users/{user_id}/carts/{product_id}:
     patch:
       summary: Update cart-item quantity
       tags:
         - users
-        - warehouse
       parameters:
         - name: user_id
           in: path
@@ -278,11 +279,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CartItem'
+        '404':
+          description: Product or User not found
+        '400':
+          description: Bad Request
     delete:
       summary: Delete product from cart
       tags:
         - users
-        - warehouse
       parameters:
         - name: user_id
           in: path
@@ -305,7 +309,6 @@ paths:
       summary: Get all user`s orders
       tags:
         - users
-        - warehouse
       parameters:
         - name: user_id
           in: path
@@ -327,7 +330,6 @@ paths:
       summary: Order from cart
       tags:
         - users
-        - warehouse
       parameters:
         - name: user_id
           in: path
@@ -346,7 +348,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderItem'
         '400':
           description: Bad Request
         '404':
@@ -374,7 +378,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderItem'
         '404':
           description: User or order not found
 
@@ -387,7 +393,7 @@ components:
       properties:
         product_id:
           type: string
-          x-go-name: productID
+          x-go-name: ProductID
         name:
           type: string
         description:
@@ -458,7 +464,7 @@ components:
       properties:
         user_id:
           type: string
-          x-go-name: userID
+          x-go-name: UserID
         email:
           type: string
       required:
@@ -470,7 +476,7 @@ components:
       properties:
         user_id:
           type: string
-          x-go-name: userID
+          x-go-name: UserID
         name:
           type: string
         information:
@@ -503,10 +509,10 @@ components:
       properties:
         user_id:
           type: string
-          x-go-name: userID
+          x-go-name: UserID
         product_id:
           type: string
-          x-go-name: productID
+          x-go-name: ProductID
         quantity:
           type: integer
       required:
@@ -519,7 +525,7 @@ components:
       properties:
         order_id:
           type: string
-          x-go-name: orderID
+          x-go-name: OrderID
         cart_items:
           type: array
           items:
@@ -529,15 +535,36 @@ components:
           format: date-time
       required:
         - order_id
-        - cart_items
         - created_at
+
+    OrderItem:
+      type: object
+      properties:
+        order_id:
+          type: string
+        product_id:
+          type: string
+        user_id:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: number
+          format: float
+      required:
+        - order_id
+        - product_id
+        - user_id
+        - quantity
+        - price
+
 
     ConfirmOrder:
       type: object
       properties:
         user_id:
           type: string
-          x-go-name: userID
+          x-go-name: UserID
         confirm:
           type: boolean
       required:
@@ -549,7 +576,7 @@ components:
       properties:
         product_id:
           type: string
-          x-go-name: productID
+          x-go-name: ProductID
         name:
           type: string
         description:
@@ -571,6 +598,6 @@ components:
           type: integer
         product_id:
           type: string
-          x-go-name: productID
+          x-go-name: ProductID
       required:
         - quantity

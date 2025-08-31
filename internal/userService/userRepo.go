@@ -10,8 +10,6 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-// Нужно будет доработать метод CreateNewUserOrder - добавить списывание товара со склада
-
 type UserRepository interface {
 	GetAllUsers() ([]models.User, error)
 	CreateNewUser(user models.User) (models.User, error)

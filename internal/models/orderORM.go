@@ -14,5 +14,5 @@ type OrderItem struct {
 	ProductID string  `json:"product_id" gorm:"primaryKey"`
 	UserID    string  `json:"user_id" gorm:"primaryKey"`
 	Quantity  int     `json:"quantity"`
-	Price     float64 `json:"price"`
+	Price     float32 `json:"price"`
 }

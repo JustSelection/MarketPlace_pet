@@ -8,54 +8,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/oapi-codegen/runtime"
 	strictecho "github.com/oapi-codegen/runtime/strictmiddleware/echo"
 )
 
-// AddProductToCartRequest defines model for AddProductToCartRequest.
-type AddProductToCartRequest struct {
-	productID string `json:"product_id"`
-	Quantity  int    `json:"quantity"`
-	userID    string `json:"user_id"`
-}
-
-// CartItem defines model for CartItem.
-type CartItem struct {
-	Description *string `json:"description,omitempty"`
-	Name        string  `json:"name"`
-	Price       float32 `json:"price"`
-	productID   string  `json:"product_id"`
-	Quantity    int     `json:"quantity"`
-}
-
-// CartItemUpdateRequest defines model for CartItemUpdateRequest.
-type CartItemUpdateRequest struct {
-	productID *string `json:"product_id,omitempty"`
-	Quantity  int     `json:"quantity"`
-}
-
-// ConfirmOrder defines model for ConfirmOrder.
-type ConfirmOrder struct {
-	Confirm bool   `json:"confirm"`
-	userID  string `json:"user_id"`
-}
-
-// Order defines model for Order.
-type Order struct {
-	CartItems []CartItem `json:"cart_items"`
-	CreatedAt time.Time  `json:"created_at"`
-	orderID   string     `json:"order_id"`
-}
-
 // WarehouseProduct defines model for WarehouseProduct.
 type WarehouseProduct struct {
 	Description *string `json:"description,omitempty"`
 	Name        string  `json:"name"`
 	Price       float32 `json:"price"`
-	productID   string  `json:"product_id"`
+	ProductID   string  `json:"product_id"`
 	Quantity    int     `json:"quantity"`
 }
 
@@ -75,15 +39,6 @@ type WarehouseProductUpdate struct {
 	Quantity    *int     `json:"quantity,omitempty"`
 }
 
-// PostUsersUserIdCartsJSONRequestBody defines body for PostUsersUserIdCarts for application/json ContentType.
-type PostUsersUserIdCartsJSONRequestBody = AddProductToCartRequest
-
-// PatchUsersUserIdCartsProductIdJSONRequestBody defines body for PatchUsersUserIdCartsProductId for application/json ContentType.
-type PatchUsersUserIdCartsProductIdJSONRequestBody = CartItemUpdateRequest
-
-// PostUsersUserIdOrdersJSONRequestBody defines body for PostUsersUserIdOrders for application/json ContentType.
-type PostUsersUserIdOrdersJSONRequestBody = ConfirmOrder
-
 // PostWarehouseJSONRequestBody defines body for PostWarehouse for application/json ContentType.
 type PostWarehouseJSONRequestBody = WarehouseProductRequest
 
@@ -92,24 +47,6 @@ type PatchWarehouseProductIdJSONRequestBody = WarehouseProductUpdate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Get all user`s cart products
-	// (GET /users/{user_id}/carts)
-	GetUsersUserIdCarts(ctx echo.Context, userId string) error
-	// Add product to cart
-	// (POST /users/{user_id}/carts)
-	PostUsersUserIdCarts(ctx echo.Context, userId string) error
-	// Delete product from cart
-	// (DELETE /users/{user_id}/carts/{product_id})
-	DeleteUsersUserIdCartsProductId(ctx echo.Context, userId string, productId string) error
-	// Update cart-item quantity
-	// (PATCH /users/{user_id}/carts/{product_id})
-	PatchUsersUserIdCartsProductId(ctx echo.Context, userId string, productId string) error
-	// Get all user`s orders
-	// (GET /users/{user_id}/orders)
-	GetUsersUserIdOrders(ctx echo.Context, userId string) error
-	// Order from cart
-	// (POST /users/{user_id}/orders)
-	PostUsersUserIdOrders(ctx echo.Context, userId string) error
 	// Get all warehouse products
 	// (GET /warehouse)
 	GetWarehouse(ctx echo.Context) error
@@ -130,118 +67,6 @@ type ServerInterface interface {
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
-}
-
-// GetUsersUserIdCarts converts echo context to params.
-func (w *ServerInterfaceWrapper) GetUsersUserIdCarts(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "user_id", runtime.ParamLocationPath, ctx.Param("user_id"), &userId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetUsersUserIdCarts(ctx, userId)
-	return err
-}
-
-// PostUsersUserIdCarts converts echo context to params.
-func (w *ServerInterfaceWrapper) PostUsersUserIdCarts(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "user_id", runtime.ParamLocationPath, ctx.Param("user_id"), &userId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PostUsersUserIdCarts(ctx, userId)
-	return err
-}
-
-// DeleteUsersUserIdCartsProductId converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteUsersUserIdCartsProductId(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "user_id", runtime.ParamLocationPath, ctx.Param("user_id"), &userId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	// ------------- Path parameter "product_id" -------------
-	var productId string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "product_id", runtime.ParamLocationPath, ctx.Param("product_id"), &productId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter product_id: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.DeleteUsersUserIdCartsProductId(ctx, userId, productId)
-	return err
-}
-
-// PatchUsersUserIdCartsProductId converts echo context to params.
-func (w *ServerInterfaceWrapper) PatchUsersUserIdCartsProductId(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "user_id", runtime.ParamLocationPath, ctx.Param("user_id"), &userId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	// ------------- Path parameter "product_id" -------------
-	var productId string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "product_id", runtime.ParamLocationPath, ctx.Param("product_id"), &productId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter product_id: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PatchUsersUserIdCartsProductId(ctx, userId, productId)
-	return err
-}
-
-// GetUsersUserIdOrders converts echo context to params.
-func (w *ServerInterfaceWrapper) GetUsersUserIdOrders(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "user_id", runtime.ParamLocationPath, ctx.Param("user_id"), &userId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetUsersUserIdOrders(ctx, userId)
-	return err
-}
-
-// PostUsersUserIdOrders converts echo context to params.
-func (w *ServerInterfaceWrapper) PostUsersUserIdOrders(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "user_id", runtime.ParamLocationPath, ctx.Param("user_id"), &userId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PostUsersUserIdOrders(ctx, userId)
-	return err
 }
 
 // GetWarehouse converts echo context to params.
@@ -338,172 +163,12 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/users/:user_id/carts", wrapper.GetUsersUserIdCarts)
-	router.POST(baseURL+"/users/:user_id/carts", wrapper.PostUsersUserIdCarts)
-	router.DELETE(baseURL+"/users/:user_id/carts/:product_id", wrapper.DeleteUsersUserIdCartsProductId)
-	router.PATCH(baseURL+"/users/:user_id/carts/:product_id", wrapper.PatchUsersUserIdCartsProductId)
-	router.GET(baseURL+"/users/:user_id/orders", wrapper.GetUsersUserIdOrders)
-	router.POST(baseURL+"/users/:user_id/orders", wrapper.PostUsersUserIdOrders)
 	router.GET(baseURL+"/warehouse", wrapper.GetWarehouse)
 	router.POST(baseURL+"/warehouse", wrapper.PostWarehouse)
 	router.DELETE(baseURL+"/warehouse/:product_id", wrapper.DeleteWarehouseProductId)
 	router.GET(baseURL+"/warehouse/:product_id", wrapper.GetWarehouseProductId)
 	router.PATCH(baseURL+"/warehouse/:product_id", wrapper.PatchWarehouseProductId)
 
-}
-
-type GetUsersUserIdCartsRequestObject struct {
-	UserId string `json:"user_id"`
-}
-
-type GetUsersUserIdCartsResponseObject interface {
-	VisitGetUsersUserIdCartsResponse(w http.ResponseWriter) error
-}
-
-type GetUsersUserIdCarts200JSONResponse []CartItem
-
-func (response GetUsersUserIdCarts200JSONResponse) VisitGetUsersUserIdCartsResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetUsersUserIdCarts404Response struct {
-}
-
-func (response GetUsersUserIdCarts404Response) VisitGetUsersUserIdCartsResponse(w http.ResponseWriter) error {
-	w.WriteHeader(404)
-	return nil
-}
-
-type PostUsersUserIdCartsRequestObject struct {
-	UserId string `json:"user_id"`
-	Body   *PostUsersUserIdCartsJSONRequestBody
-}
-
-type PostUsersUserIdCartsResponseObject interface {
-	VisitPostUsersUserIdCartsResponse(w http.ResponseWriter) error
-}
-
-type PostUsersUserIdCarts201JSONResponse CartItem
-
-func (response PostUsersUserIdCarts201JSONResponse) VisitPostUsersUserIdCartsResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(201)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PostUsersUserIdCarts404Response struct {
-}
-
-func (response PostUsersUserIdCarts404Response) VisitPostUsersUserIdCartsResponse(w http.ResponseWriter) error {
-	w.WriteHeader(404)
-	return nil
-}
-
-type DeleteUsersUserIdCartsProductIdRequestObject struct {
-	UserId    string `json:"user_id"`
-	ProductId string `json:"product_id"`
-}
-
-type DeleteUsersUserIdCartsProductIdResponseObject interface {
-	VisitDeleteUsersUserIdCartsProductIdResponse(w http.ResponseWriter) error
-}
-
-type DeleteUsersUserIdCartsProductId204Response struct {
-}
-
-func (response DeleteUsersUserIdCartsProductId204Response) VisitDeleteUsersUserIdCartsProductIdResponse(w http.ResponseWriter) error {
-	w.WriteHeader(204)
-	return nil
-}
-
-type DeleteUsersUserIdCartsProductId404Response struct {
-}
-
-func (response DeleteUsersUserIdCartsProductId404Response) VisitDeleteUsersUserIdCartsProductIdResponse(w http.ResponseWriter) error {
-	w.WriteHeader(404)
-	return nil
-}
-
-type PatchUsersUserIdCartsProductIdRequestObject struct {
-	UserId    string `json:"user_id"`
-	ProductId string `json:"product_id"`
-	Body      *PatchUsersUserIdCartsProductIdJSONRequestBody
-}
-
-type PatchUsersUserIdCartsProductIdResponseObject interface {
-	VisitPatchUsersUserIdCartsProductIdResponse(w http.ResponseWriter) error
-}
-
-type PatchUsersUserIdCartsProductId200JSONResponse CartItem
-
-func (response PatchUsersUserIdCartsProductId200JSONResponse) VisitPatchUsersUserIdCartsProductIdResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetUsersUserIdOrdersRequestObject struct {
-	UserId string `json:"user_id"`
-}
-
-type GetUsersUserIdOrdersResponseObject interface {
-	VisitGetUsersUserIdOrdersResponse(w http.ResponseWriter) error
-}
-
-type GetUsersUserIdOrders200JSONResponse []Order
-
-func (response GetUsersUserIdOrders200JSONResponse) VisitGetUsersUserIdOrdersResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetUsersUserIdOrders404Response struct {
-}
-
-func (response GetUsersUserIdOrders404Response) VisitGetUsersUserIdOrdersResponse(w http.ResponseWriter) error {
-	w.WriteHeader(404)
-	return nil
-}
-
-type PostUsersUserIdOrdersRequestObject struct {
-	UserId string `json:"user_id"`
-	Body   *PostUsersUserIdOrdersJSONRequestBody
-}
-
-type PostUsersUserIdOrdersResponseObject interface {
-	VisitPostUsersUserIdOrdersResponse(w http.ResponseWriter) error
-}
-
-type PostUsersUserIdOrders201JSONResponse Order
-
-func (response PostUsersUserIdOrders201JSONResponse) VisitPostUsersUserIdOrdersResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(201)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PostUsersUserIdOrders400Response struct {
-}
-
-func (response PostUsersUserIdOrders400Response) VisitPostUsersUserIdOrdersResponse(w http.ResponseWriter) error {
-	w.WriteHeader(400)
-	return nil
-}
-
-type PostUsersUserIdOrders404Response struct {
-}
-
-func (response PostUsersUserIdOrders404Response) VisitPostUsersUserIdOrdersResponse(w http.ResponseWriter) error {
-	w.WriteHeader(404)
-	return nil
 }
 
 type GetWarehouseRequestObject struct {
@@ -614,6 +279,14 @@ func (response PatchWarehouseProductId200JSONResponse) VisitPatchWarehouseProduc
 	return json.NewEncoder(w).Encode(response)
 }
 
+type PatchWarehouseProductId400Response struct {
+}
+
+func (response PatchWarehouseProductId400Response) VisitPatchWarehouseProductIdResponse(w http.ResponseWriter) error {
+	w.WriteHeader(400)
+	return nil
+}
+
 type PatchWarehouseProductId404Response struct {
 }
 
@@ -624,24 +297,6 @@ func (response PatchWarehouseProductId404Response) VisitPatchWarehouseProductIdR
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
-	// Get all user`s cart products
-	// (GET /users/{user_id}/carts)
-	GetUsersUserIdCarts(ctx context.Context, request GetUsersUserIdCartsRequestObject) (GetUsersUserIdCartsResponseObject, error)
-	// Add product to cart
-	// (POST /users/{user_id}/carts)
-	PostUsersUserIdCarts(ctx context.Context, request PostUsersUserIdCartsRequestObject) (PostUsersUserIdCartsResponseObject, error)
-	// Delete product from cart
-	// (DELETE /users/{user_id}/carts/{product_id})
-	DeleteUsersUserIdCartsProductId(ctx context.Context, request DeleteUsersUserIdCartsProductIdRequestObject) (DeleteUsersUserIdCartsProductIdResponseObject, error)
-	// Update cart-item quantity
-	// (PATCH /users/{user_id}/carts/{product_id})
-	PatchUsersUserIdCartsProductId(ctx context.Context, request PatchUsersUserIdCartsProductIdRequestObject) (PatchUsersUserIdCartsProductIdResponseObject, error)
-	// Get all user`s orders
-	// (GET /users/{user_id}/orders)
-	GetUsersUserIdOrders(ctx context.Context, request GetUsersUserIdOrdersRequestObject) (GetUsersUserIdOrdersResponseObject, error)
-	// Order from cart
-	// (POST /users/{user_id}/orders)
-	PostUsersUserIdOrders(ctx context.Context, request PostUsersUserIdOrdersRequestObject) (PostUsersUserIdOrdersResponseObject, error)
 	// Get all warehouse products
 	// (GET /warehouse)
 	GetWarehouse(ctx context.Context, request GetWarehouseRequestObject) (GetWarehouseResponseObject, error)
@@ -669,176 +324,6 @@ func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareF
 type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
-}
-
-// GetUsersUserIdCarts operation middleware
-func (sh *strictHandler) GetUsersUserIdCarts(ctx echo.Context, userId string) error {
-	var request GetUsersUserIdCartsRequestObject
-
-	request.UserId = userId
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.GetUsersUserIdCarts(ctx.Request().Context(), request.(GetUsersUserIdCartsRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetUsersUserIdCarts")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(GetUsersUserIdCartsResponseObject); ok {
-		return validResponse.VisitGetUsersUserIdCartsResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// PostUsersUserIdCarts operation middleware
-func (sh *strictHandler) PostUsersUserIdCarts(ctx echo.Context, userId string) error {
-	var request PostUsersUserIdCartsRequestObject
-
-	request.UserId = userId
-
-	var body PostUsersUserIdCartsJSONRequestBody
-	if err := ctx.Bind(&body); err != nil {
-		return err
-	}
-	request.Body = &body
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PostUsersUserIdCarts(ctx.Request().Context(), request.(PostUsersUserIdCartsRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostUsersUserIdCarts")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(PostUsersUserIdCartsResponseObject); ok {
-		return validResponse.VisitPostUsersUserIdCartsResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// DeleteUsersUserIdCartsProductId operation middleware
-func (sh *strictHandler) DeleteUsersUserIdCartsProductId(ctx echo.Context, userId string, productId string) error {
-	var request DeleteUsersUserIdCartsProductIdRequestObject
-
-	request.UserId = userId
-	request.ProductId = productId
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteUsersUserIdCartsProductId(ctx.Request().Context(), request.(DeleteUsersUserIdCartsProductIdRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteUsersUserIdCartsProductId")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(DeleteUsersUserIdCartsProductIdResponseObject); ok {
-		return validResponse.VisitDeleteUsersUserIdCartsProductIdResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// PatchUsersUserIdCartsProductId operation middleware
-func (sh *strictHandler) PatchUsersUserIdCartsProductId(ctx echo.Context, userId string, productId string) error {
-	var request PatchUsersUserIdCartsProductIdRequestObject
-
-	request.UserId = userId
-	request.ProductId = productId
-
-	var body PatchUsersUserIdCartsProductIdJSONRequestBody
-	if err := ctx.Bind(&body); err != nil {
-		return err
-	}
-	request.Body = &body
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PatchUsersUserIdCartsProductId(ctx.Request().Context(), request.(PatchUsersUserIdCartsProductIdRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PatchUsersUserIdCartsProductId")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(PatchUsersUserIdCartsProductIdResponseObject); ok {
-		return validResponse.VisitPatchUsersUserIdCartsProductIdResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// GetUsersUserIdOrders operation middleware
-func (sh *strictHandler) GetUsersUserIdOrders(ctx echo.Context, userId string) error {
-	var request GetUsersUserIdOrdersRequestObject
-
-	request.UserId = userId
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.GetUsersUserIdOrders(ctx.Request().Context(), request.(GetUsersUserIdOrdersRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetUsersUserIdOrders")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(GetUsersUserIdOrdersResponseObject); ok {
-		return validResponse.VisitGetUsersUserIdOrdersResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// PostUsersUserIdOrders operation middleware
-func (sh *strictHandler) PostUsersUserIdOrders(ctx echo.Context, userId string) error {
-	var request PostUsersUserIdOrdersRequestObject
-
-	request.UserId = userId
-
-	var body PostUsersUserIdOrdersJSONRequestBody
-	if err := ctx.Bind(&body); err != nil {
-		return err
-	}
-	request.Body = &body
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PostUsersUserIdOrders(ctx.Request().Context(), request.(PostUsersUserIdOrdersRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostUsersUserIdOrders")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(PostUsersUserIdOrdersResponseObject); ok {
-		return validResponse.VisitPostUsersUserIdOrdersResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
 }
 
 // GetWarehouse operation middleware
