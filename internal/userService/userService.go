@@ -118,6 +118,11 @@ func (s *userService) CreateCartUserProduct(userID, productID string, quantity i
 }
 
 func (s *userService) GetAllCartUserProducts(userID string) ([]models.UserCartItem, error) {
+	_, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return nil, fmt.Errorf("service: could not find user by id %w", err)
+	}
+
 	return s.userRepo.GetAllCartUserProducts(userID)
 }
 
@@ -131,6 +136,11 @@ func (s *userService) CreateNewUserOrder(confirm bool, userID string) ([]models.
 }
 
 func (s *userService) GetAllUserOrders(userID string) ([]models.Order, error) {
+	_, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return nil, fmt.Errorf("service: could not find user by id %w", err)
+	}
+
 	return s.userRepo.GetAllUserOrders(userID)
 }
 

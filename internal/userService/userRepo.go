@@ -62,7 +62,7 @@ func (r *userRepository) GetUserByID(userID string) (models.User, error) {
 	err := r.db.Where("user_id = ? AND deleted_at IS NULL", userID).First(&user).Error
 	if err != nil {
 		if errors.Is(gorm.ErrRecordNotFound, err) {
-			return models.User{}, fmt.Errorf("repo: user not found")
+			return models.User{}, fmt.Errorf("repo: user not found: %w", err)
 		}
 		return models.User{}, fmt.Errorf("repo: could not get user: %w", err)
 	}
@@ -136,9 +136,12 @@ func (r *userRepository) CreateCartUserProduct(userID string, item models.UserCa
 	}
 
 	cartItem := models.UserCartItem{
-		UserID:    userID,
-		ProductID: item.ProductID,
-		Quantity:  item.Quantity,
+		UserID:      userID,
+		ProductID:   item.ProductID,
+		Quantity:    item.Quantity,
+		Name:        item.Name,
+		Description: item.Description,
+		Price:       item.Price,
 	}
 	result := r.db.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "user_id"}, {Name: "product_id"}}, // primaryKey

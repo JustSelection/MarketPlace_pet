@@ -1,6 +1,6 @@
 DB_HOST := localhost
 DB_PORT := 5454
-DB_NAME := postgres
+DB_NAME := postgres-market
 DB_USER := postgres
 DB_PASS := yourpassword
 
