@@ -21,6 +21,10 @@ migrate-down:
 	@echo "Rolling back migrations..."
 	$(MIGRATE) down
 
+migrate-status:
+	@echo "Checking migration status..."
+	migrate -path ./migrations -database "$(DB_DSN)" version
+
 drop-users:
 	@echo "Dropping users table..."
 	$(PSQL) -c "DROP TABLE IF EXISTS users;"

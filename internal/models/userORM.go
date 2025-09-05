@@ -6,8 +6,8 @@ type User struct {
 	ID          string         `json:"user_id" gorm:"column:user_id;primaryKey"`
 	Name        string         `json:"name,omitempty"`
 	Information string         `json:"information,omitempty"`
-	Email       string         `json:"email"`
-	Password    string         `json:"password,omitempty"`
+	Email       string         `json:"email" gorm:"not null;unique"`
+	Password    string         `json:"password,omitempty" gorm:"not null"`
 	DeletedAt   gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
